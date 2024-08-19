@@ -1,0 +1,106 @@
+﻿@model SocialWeb.ViewModels.MessageIndex
+
+@{
+    ViewData["Title"] = "Message";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row" style="background-color: #FF4E88; color: #FFDA76">
+    <div class="col-3 border">
+        <div class="overflow-auto" style="height: 60%">
+            <h3>
+                Friends
+            </h3>
+            @foreach (var item in Model.Friends)
+            {
+                <div>
+                    <button class="btnFriend" onclick="LoadPrivateMessage(@item.Id)">
+                        <div class="d-flex align-items-center">
+                            <img src="@Url.Action("GetUserImage", "User", new { id = item.Id})" class="m-2 rounded-circle" alt="img" style="width: 50px; height:50px" />
+                            <div>@item.Name</div>
+                        </div>
+                    </button>
+                </div>
+
+            }
+        </div>
+        
+        <div class="overflow-auto" style="height: 40%">
+            <h3>
+                Group Chat
+            </h3>
+            <button data-bs-toggle="modal" data-bs-target="#groupModal" style="width: 100%">
+                Create New Group
+            </button>
+            <!-- The Modal -->
+            <div class="modal" id="groupModal">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="background-color: #FF4E88">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Create a new group</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <form id="createGroupForm" asp-action="CreateGroupChat" method="post">
+                                <div class="form-floating mb-3 mt-3">
+                                    <input type="text" class="form-control" id="nameGroup" placeholder="Name new group" name="nameGroup">
+                                    <label for="nameGroup">Group's name</label>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer d-flex justify-content-around">
+                            <button type="submit" form="createGroupForm" class="btn btn-success">Create</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            @foreach (var item in Model.GroupChats)
+            {
+                <div class="d-flex justify-content-between align-items-center">
+                    <button class="btnGroup" onclick="LoadGroupMessage(@item.Id)">
+                        <div class="d-flex align-items-center">
+                            <img src="~/images/group-image.jpg" class="m-2 rounded-circle" alt="img" style="width: 50px; height:50px" />
+                            <div>@item.Name</div>
+                        </div>
+                    </button>
+                    
+                </div>
+               
+
+            }
+        </div>
+        
+    </div>
+    <div class="col-9" style="height: 100vh;">
+        <div id="messageContainer">
+
+        </div>
+    </div>
+</div>
+<style>
+    .btnFriend{
+        background-color: #FF4E88;
+        width: 100%;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        color: #FFDA76
+    }
+
+    .btnGroup {
+        background-color: #FF4E88;
+        width: 100%;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        color: #FFDA76
+    }
+</style>
+

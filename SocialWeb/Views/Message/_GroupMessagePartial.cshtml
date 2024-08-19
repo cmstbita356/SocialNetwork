@@ -1,0 +1,152 @@
+﻿@model SocialWeb.ViewModels.GroupMessage
+
+<div class="d-flex flex-column border" style="height: 100vh;">
+    <div class="d-flex p-2 align-items-center justify-content-between" style="background-color: #E90074;">
+        <div class="d-flex align-items-center">
+            <img src="~/images/group-image.jpg" class="m-2 rounded-circle" alt="img" style="width: 50px; height:50px" />
+            <div class="d-flex-column ms-2" style="color: #FFDA76">
+                <div>
+                    <strong>@Model.GroupChat.Name</strong>
+                </div>
+                <a data-bs-toggle="modal" data-bs-target="#friendModal">
+                    <small>@Model.Members.Count Members</small>
+                </a>
+                <!-- Friend Modal -->
+                <div class="modal" id="friendModal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="background-color: #FF4E88">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">@Model.GroupChat.Name's Members</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                @foreach (var f in Model.Members)
+                                {
+                                    <a class="d-flex align-items-center mb-2 border p-2" asp-controller="User" asp-action="Index" asp-route-id="@f.Id" style="color: #FFDA76; font-size: 20px; text-decoration: none">
+                                        <div class="d-flex align-items-center">
+                                            <img class="rounded-circle" src="@Url.Action("GetUserImage", "User", new { id = f.Id})" alt="img" style="height: 50px; width: 50px" />
+                                            <div class="mx-2">
+                                                <strong>@f.Name</strong>
+                                            </div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <a data-bs-toggle="modal" data-bs-target="#addMemberModal">
+            <img src="~/images/add-member.png" alt="img" style="width: 30px; height: 30px" />
+        </a>
+         <!-- The Modal -->
+        <div class="modal" id="addMemberModal">
+            <div class="modal-dialog">
+                <div class="modal-content" style="background-color: #FF4E88">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add member to "@Model.GroupChat.Name"</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form id="addMemberForm" asp-action="AddMember" method="post">
+                            @foreach (var item in Model.UsersToAdd)
+                            {
+                                <div class="form-check d-flex justify-content-between align-items-center">
+                                    <label class="d-flex align-items-center" for="ckbFriend-@item.Id" style="width: 100%">
+                                        <img src="@Url.Action("GetUserImage", "User", new { id = item.Id})" class="m-2 rounded-circle" alt="img" style="width: 50px; height:50px" />
+                                        <div>@item.Name</div>
+                                    </label>
+                                    <input type="hidden" name="groupchatid" value="@Model.GroupChat.Id"/>
+                                    <input class="form-check-input" type="checkbox" name="selectedFriends" id="ckbFriend-@item.Id" value="@item.Id" style="transform: scale(1.5);" />
+                                </div>
+                            }
+                        </form>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer d-flex justify-content-around">
+                        <button type="submit" form="addMemberForm" class="btn btn-success">Add</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="messageContent" class="d-flex-column flex-grow-1 overflow-auto" style="">
+        @foreach (var m in Model.UserGroupMessages)
+        {
+            if (m.Sender.Id != Model.Yourself.Id)
+            {
+                <div class="mb-2">
+                    <div class="d-flex-column" style="">                       
+                        <div>
+                            <small>@m.Message.Date.ToString("dd/MM/yy hh:mm")</small>
+                        </div>
+                        <div>
+                            @m.Sender.Name
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <img src="@Url.Action("GetUserImage", "User", new { id = m.Sender.Id})" class="m-2 rounded-circle" alt="img" style="width: 50px; height:50px" />
+                        <div class="message1 p-2">
+                            <strong>@m.Message.Content</strong>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mb-2" style="text-align: right">
+                    <div style="text-align: right">                       
+                        <small>@m.Message.Date.ToString("dd/MM/yy hh:mm")</small>                       
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <div class="message2 p-2">
+                            <strong>@m.Message.Content</strong>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div class="input-group">
+        <input id="contentMessage-@Model.GroupChat.Id" type="text" class="form-control" placeholder="Message">
+        <button class="btn" onclick="AddGroupMessage(@Model.GroupChat.Id)" style="background-color: #B4D6CD; color: #FF4E88">Go</button>
+    </div>
+</div>
+<style>
+    .message1 {
+        background-color: #B4D6CD;
+        color: #FF4E88;
+        border-radius: 15px;
+        max-width: 35%;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    .message2 {
+        background-color: #FFDA76;
+        color: #FF4E88;
+        border-radius: 15px;
+        max-width: 35%; /* Chiều rộng tối đa của message2 là 40% của phần tử cha */
+        word-wrap: break-word; /* Tự động xuống dòng nếu nội dung dài */
+        overflow-wrap: break-word; /* Tương tự như word-wrap */
+    }
+
+</style>
+

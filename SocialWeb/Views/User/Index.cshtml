@@ -1,0 +1,273 @@
+﻿@model SocialWeb.ViewModels.UserIndex
+
+@{
+	ViewData["Title"] = "SocialWeb";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - SocialWeb</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/SocialWeb.styles.css" asp-append-version="true" />
+	<script src="~/js/site.js"></script>
+	
+	<script src="https://kit.fontawesome.com/e50213ec74.js" crossorigin="anonymous"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<body>
+	<div class="PersonalInfo d-flex justify-content-between" style="background-color: #FF4E88">
+		<div class="d-flex">
+			<img src="@Url.Action("GetUserImage", "User", new { id = Model.User.Id})" class="m-2 rounded-circle" alt="img" style="width: 100px; height:100px" />
+			<div class="flex-column align-content-center">
+				<div class="d-flex">
+					<div style="font-size: 25px; color: #FFDA76"><strong>@Model.User.Name</strong></div>
+					@if (Model.User.Id == Model.CurrentUser.Id)
+					{
+						<a data-bs-toggle="modal" data-bs-target="#myModal"><i class="fa-solid fa-pencil m-2" style="color: #B4D6CD"></i></a>
+						<!-- Name change Modal -->
+						<div class="modal" id="myModal">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content" style="background-color: #FF4E88">
+
+									<!-- Modal Header -->
+									<div class="modal-header">
+										<h4 class="modal-title">Change your name</h4>
+										<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+									</div>
+
+									<!-- Modal body -->
+									<div class="modal-body">
+										<form id="nameChangeForm" asp-action="EditName" method="post">
+											<div class="form-floating m-3">
+												<input type="text" class="form-control" id="newName" placeholder="Enter new name" name="newName" value="@Model.User.Name">
+												<label for="newName">New Name</label>
+											</div>
+										</form>
+									</div>
+
+									<!-- Modal footer -->
+									<div class="modal-footer d-flex justify-content-around">
+										<button type="submit" form="nameChangeForm" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+										<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					}
+					
+				</div>
+
+				<a data-bs-toggle="modal" data-bs-target="#friendModal" style="font-size: 18px; color: #FFDA76">@Model.CountFriends Friends</a>
+				<!-- Friend Modal -->
+				<div class="modal" id="friendModal">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content" style="background-color: #FF4E88">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">@Model.CurrentUser.Name's Friends</h4>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+							</div>
+
+							<!-- Modal body -->
+							<div class="modal-body">
+								@foreach(var f in Model.Friends)
+								{
+									<a class="d-flex align-items-center mb-2 border p-2" asp-action="Index" asp-route-id="@f.Id" style="color: #FFDA76; font-size: 20px; text-decoration: none">
+										<div class="d-flex align-items-center" >
+											<img class="rounded-circle" src="@Url.Action("GetUserImage", "User", new { id = f.Id})" alt="img" style="height: 50px; width: 50px" />
+											<div class="mx-2">
+												<strong>@f.Name</strong>
+											</div>
+										</div>									
+									</a>
+								}
+							</div>
+
+							<!-- Modal footer -->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="align-content-end m-3">
+			@if(Model.User == Model.CurrentUser)
+			{
+				<button data-bs-toggle="modal" data-bs-target="#imageModal" class="align-content-end border-0" style="background-color: #B4D6CD; color: #FF4E88">
+					<strong>
+						<i class="fa-solid fa-pencil m-2"></i>
+						Your Personal Information
+					</strong>
+				</button>
+				<!-- The Modal -->
+				<div class="modal" id="imageModal">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content" style="background-color: #FF4E88">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Change your image</h4>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+							</div>
+
+							<!-- Modal body -->
+							<div class="modal-body">
+								<form id="imageChangeForm" asp-action="EditNewImage" method="post" enctype="multipart/form-data">
+									<div class="form-group">
+										<label for="ImagePersonal">Upload Image:</label>
+										<input type="file" name="ImagePersonal" id="ImagePersonal" class="form-control" />
+									</div>
+								</form>
+							</div>
+
+							<!-- Modal footer -->
+							<div class="modal-footer d-flex justify-content-around">
+								<button type="submit" form="imageChangeForm" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			}
+			
+		</div>
+
+	</div>
+	@if (Model.User.Id == Model.CurrentUser.Id)
+	{
+		<div class="createPost mt-3" style="background-color: #FF4E88; color: #FFDA76">
+			<form class="m-3" asp-action="CreatePost" method="post" enctype="multipart/form-data">
+				<div class="form-group">
+					<label for="Content">Content:</label>
+					<input name="Content" id="Content" class="form-control" />
+				</div>
+				<div class="form-group">
+					<label for="Image">Upload Image:</label>
+					<input type="file" name="Image" id="Image" class="form-control" />
+				</div>
+				<button type="submit" class="btn btn-primary my-2 border-0" style="width: 100%; background-color: #B4D6CD; color: #FF4E88"><strong>Post</strong></button>
+			</form>
+		</div>
+	}
+	
+	<div class="Posts">
+		@foreach (var item in Model.PostLikeComments)
+		{
+			<div class="Post flex-column mt-3" style="background-color: #FF4E88; color: #FFDA76">
+				<div class="d-flex justify-content-between ms-3">
+					<div>@item.Post.CreateDate</div>
+					@if (Model.User.Id == Model.CurrentUser.Id)
+					{
+						<a class="me-1" style="color:red" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Post.Id">
+							<i class="fa fa-trash" aria-hidden="true"></i>
+						</a>
+						<!-- The Modal -->
+						<div class="modal" id="deleteModal-@item.Post.Id">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content">
+									<!-- Modal Header -->
+									<div class="modal-header">
+										<h4 class="modal-title">Are you sure ?</h4>
+										<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+									</div>
+									<!-- Modal body -->
+									<div class="modal-body">
+										<form id="deletePostForm-@item.Post.Id" asp-action="DeletePost" method="post">
+											<input type="hidden" value="@item.Post.Id" name="id" />
+										</form>
+									</div>
+
+									<!-- Modal footer -->
+									<div class="modal-footer d-flex justify-content-around">
+										<button type="submit" form="deletePostForm-@item.Post.Id" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+				<div class="ms-3">@item.Post.Content</div>
+
+				@if (item.Post.Image != null)
+				{
+					<div class="row">
+						<div class="col-md-8 col-12">
+							<img class="mx-3" src="@Url.Action("GetPostImage", "User", new { id = item.Post.Id })" alt="img" style="width: 100%; height: 700px;" />
+						</div>
+						<div class="col-md-4 col-12" style="font-size: 25px">
+							<div id="CountLike">
+								
+								@if(item.isLike == false)
+								{
+									<span id="count-@item.Post.Id">@item.CountLike</span>
+									<a id="btnLike-@item.Post.Id" onclick="LikePost(@item.Post.Id)">
+										<i class="fa fa-thumbs-up" aria-hidden="true"></i>
+									</a>
+								}
+								else
+								{
+									<span id="count-@item.Post.Id" style="color: #B4D6CD">@item.CountLike</span>
+									<a id="btnLike-@item.Post.Id" onclick="UnLikePost(@item.Post.Id)" style="color: #B4D6CD">
+										<i class="fa fa-thumbs-up" aria-hidden="true"> </i>
+									</a>
+								}
+
+							</div>
+							<h3 >Comments</h3>
+							<div class="border">
+								@if (item.UserComments != null)
+								{
+									<div class="commentContainer" id="commentContainer-@item.Post.Id" style="font-size: 20px">
+										@Html.Partial("_CommentsPartial", item.UserComments)
+									</div>
+									
+									<div class="input-group">
+										<input id="contentComment-@item.Post.Id" type="text" class="form-control" placeholder="Comment">
+										<button class="btn" onclick="CreateComment(@item.Post.Id)" style="background-color: #B4D6CD; color: #FF4E88">Go</button>
+									</div>
+										
+									
+								}
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+
+		}
+	</div>
+</body>
+<style>
+	#CountLike{
+		
+		display: inline
+	}
+
+	#CountLike:hover {
+			color: #B4D6CD;
+	}
+	.commentContainer
+	{
+		max-height: 550px;
+		overflow-y: auto;
+		width: 100%;
+		white-space: normal;
+		word-wrap: break-word;
+		word-break: break-word;
+	}
+</style>

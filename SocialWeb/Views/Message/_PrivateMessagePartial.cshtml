@@ -1,0 +1,67 @@
+﻿@model SocialWeb.ViewModels.FriendMessage
+
+<div class="d-flex flex-column border" style="height: 100vh;">
+    <div class="d-flex p-2 align-items-center" style="background-color: #E90074;">
+        <img src="@Url.Action("GetUserImage", "User", new { id = Model.Friend.Id})" class="m-2 rounded-circle" alt="img" style="width: 50px; height:50px" />
+        <a class="m-2" asp-controller="User" asp-action="Index" asp-route-id="@Model.Friend.Id" style="color: #FFF078; text-decoration: none;">
+            <strong>@Model.Friend.Name</strong>
+        </a>
+    </div>
+    <div id="messageContent" class="d-flex-column flex-grow-1 overflow-auto" style="">
+        @foreach (var m in Model.Messages)
+        {
+            if (m.SenderId == Model.Friend.Id)
+            {
+                <div class="mb-2">
+                    <div>
+                        <small>@m.Date.ToString("dd/MM/yy hh:mm")</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <img src="@Url.Action("GetUserImage", "User", new { id = m.SenderId})" class="m-2 rounded-circle" alt="img" style="width: 50px; height:50px" />
+                        <div class="message1 p-2">
+                            <strong>@m.Content</strong>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mb-2" style="text-align: right">
+                    <div style="text-align: right">
+                        <small>@m.Date.ToString("dd/MM/yy hh:mm")</small>
+                    </div>
+                    <div class="d-flex justify-content-end" >
+                        <div class="message2 p-2">
+                            <strong>@m.Content</strong>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div class="input-group">
+        <input id="contentMessage-@Model.Friend.Id" type="text" class="form-control" placeholder="Message">
+        <button class="btn" onclick="AddPrivateMessage(@Model.Friend.Id)" style="background-color: #B4D6CD; color: #FF4E88">Go</button>
+    </div>
+</div>
+<style>
+    .message1{
+        background-color: #B4D6CD;
+        color: #FF4E88;
+        border-radius: 15px;
+        max-width: 35%;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+    .message2{
+        background-color: #FFDA76;
+        color: #FF4E88;
+        border-radius: 15px;
+        max-width: 35%; /* Chiều rộng tối đa của message2 là 40% của phần tử cha */
+        word-wrap: break-word; /* Tự động xuống dòng nếu nội dung dài */
+        overflow-wrap: break-word; /* Tương tự như word-wrap */
+    }
+
+    
+</style>
+

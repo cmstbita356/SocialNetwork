@@ -1,0 +1,28 @@
+﻿@model IEnumerable<SocialWeb.ViewModels.UserComment>
+
+@if (Model != null)
+{
+	@foreach (var uc in Model)
+	{
+		<div class="border pb-2">
+			<div class="d-flex align-items-center">
+				<img class="rounded-circle" src="@Url.Action("GetUserImage", "User", new { id = uc.User.Id})" alt="img" style="height: 50px; width: 50px" />
+				<div class="d-flex-column ms-3">
+					<div>
+						@uc.Comment.Date.ToString("MM/dd hh:mm:ss")
+					</div>
+					<a asp-action="Index" asp-controller="User" asp-route-id="@uc.User.Id" style="color: #FFDA76; text-decoration: none">
+						<strong>@uc.User.Name</strong>
+					</a>
+				</div>
+
+			</div>
+			<div class="ms-3">
+				@uc.Comment.Content
+			</div>
+		</div>
+	}
+	
+
+
+}

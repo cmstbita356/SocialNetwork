@@ -1,0 +1,27 @@
+﻿@model IEnumerable<SocialWeb.Models.User>
+
+@foreach (var item in Model)
+{
+    <div class="d-flex justify-content-between align-items-center mb-5 border p-2" style="color: #FFDA76; font-size: 20px">
+        <a asp-action="Index" asp-controller="User" asp-route-id="@item.Id" class="d-flex align-items-center" style="color: #FFDA76; text-decoration: none">
+            <img class="rounded-circle" src="@Url.Action("GetUserImage", "User", new { id = item.Id})" alt="img" style="height: 50px; width: 50px" />
+            <div class="mx-2">
+                @item.Name
+            </div>
+        </a>
+
+        <div>
+            <button id="btn-@item.Id" onclick="AcceptRequest(@item.Id)" style="background-color: #B4D6CD; color: green; width: 50px; height: 50px">
+                <i class="fa fa-check-circle" aria-hidden="true"></i>
+            </button>
+            <button id="btn-@item.Id" onclick="DeleteRequest(@item.Id)" style="background-color: #B4D6CD; color: red; width: 50px; height: 50px">
+                <i class="fa fa-times-circle" aria-hidden="true"></i>
+            </button>
+        </div>
+
+
+
+    </div>
+}
+
+
